@@ -36,14 +36,23 @@ jobs:
         pip install pypushdeer
 
     # 执行 签到脚本
-    - name: running checkin
+    - name: running checkin (two accounts)
+      shell: bash
       run: |
-        python checkin.py
+        set -e
+
+        for idx in 1 2; do
+          echo "===== Checkin account ${idx} ====="
+          GLADOS_COOKIES="$(printenv GLADOS_COOKIES_${idx})" \
+          GLADOS_EXCHANGE_PLAN="$(printenv GLADOS_EXCHANGE_PLAN_${idx})" \
+          python checkin.py
+        done
       env:
-        # env获取
         PUSHDEER_SENDKEY: ${{ secrets.PUSHDEER_SENDKEY }}
-        GLADOS_COOKIES: ${{ secrets.GLADOS_COOKIES }}
-        GLADOS_EXCHANGE_PLAN: ${{ secrets.GLADOS_EXCHANGE_PLAN }}
+        GLADOS_COOKIES_1: ${{ secrets.GLADOS_COOKIES_1 }}
+        GLADOS_COOKIES_2: ${{ secrets.GLADOS_COOKIES_2 }}
+        GLADOS_EXCHANGE_PLAN_1: ${{ secrets.GLADOS_EXCHANGE_PLAN_1 }}
+        GLADOS_EXCHANGE_PLAN_2: ${{ secrets.GLADOS_EXCHANGE_PLAN_2 }}
 
     - name: keep alive
       uses: liskin/gh-workflow-keepalive@v1 # using the workflow with default settings
